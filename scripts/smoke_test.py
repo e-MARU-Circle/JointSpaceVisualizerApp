@@ -3,13 +3,21 @@ import sys
 
 # Ensure offscreen platform for headless environments
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
-
-from PyQt5 import QtWidgets, QtCore
+os.environ.setdefault("QT_MAC_WANTS_LAYER", "1")
+os.environ.setdefault("JSV_HEADLESS", "1")
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
+from app.env_utils import prepare_runtime_dirs
+from app.logging_config import configure_logging
+
+prepare_runtime_dirs()
+configure_logging()
+
+from PyQt5 import QtWidgets, QtCore
+
 try:
-    from app.main import JointSpaceVisualizerApp
+    from app.ui import JointSpaceVisualizerApp
 except Exception as e:
     print(f"IMPORT_ERROR: {e}")
     sys.exit(2)

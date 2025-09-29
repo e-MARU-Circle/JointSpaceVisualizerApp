@@ -1,12 +1,23 @@
 # -*- mode: python ; coding: utf-8 -*-
 
+from PyInstaller.utils.hooks import (
+    collect_data_files,
+    collect_dynamic_libs,
+    collect_submodules,
+)
+
+pyvista_datas = collect_data_files('pyvista')
+pyvistaqt_datas = collect_data_files('pyvistaqt')
+vtk_binaries = collect_dynamic_libs('vtkmodules')
+hiddenimports = collect_submodules('pyvista') + collect_submodules('pyvistaqt') + ['PyQt5.sip']
+
 
 a = Analysis(
     ['app/main.py'],
     pathex=[],
-    binaries=[],
-    datas=[],
-    hiddenimports=[],
+    binaries=vtk_binaries,
+    datas=pyvista_datas + pyvistaqt_datas + [('resources', 'resources')],
+    hiddenimports=hiddenimports,
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
@@ -20,7 +31,7 @@ exe = EXE(
     pyz,
     a.scripts,
     [],
-    exclude_binaries=True,
+    exclude_binaries=False,
     name='JointSpaceVisualizer',
     debug=False,
     bootloader_ignore_signals=False,

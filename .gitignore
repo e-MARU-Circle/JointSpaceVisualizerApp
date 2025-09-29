@@ -5,6 +5,10 @@ __pycache__/
 *.pyd
 .Python
 .pytest_cache/
+.joint_space_visualizer/
+
+# Project notes / temp docs
+diary/
 
 # Virtual env
 venv/
@@ -24,4 +28,3 @@ dist/
 
 # Logs
 *.log
-

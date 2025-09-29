@@ -1,48 +1,79 @@
-Joint Space Visualizer (Standalone)
-===================================
+JointSpaceVisualizer ver.2
+==========================
 
-A PyQt5 + PyVista application to visualize distances between two 3D surface models using `vtkDistancePolyDataFilter`. Includes snapshot tabs, a side-by-side compare view, decimation, and export utilities.
+PyQt5 + PyVista 製の 3D 距離可視化ツールです。ターゲットモデルとソースモデルの表面距離を `vtkDistancePolyDataFilter` で計算し、カラーリングや比較ビューで確認できます。UI は日本語化され、「重要事項」タブで免責事項へ同意した後に操作します。
 
-Quickstart
-----------
+⚠️ 重要：利用制限（アプリ内と同じ内容）
+--------------------------------------
 
-- Requirements: Python 3.9+ (recommended), macOS/Windows/Linux
-- Create venv and install deps:
-  - `python -m venv venv && source venv/bin/activate` (Windows: `venv\\Scripts\\activate`)
-  - `pip install -r requirements.txt`
+- 本ソフトウェアは医療機器ではありません。診断・治療・予防などの医学的判断に使用しないでください。
+- 利用可能範囲は研究用途に限ります。臨床現場での意思決定には使用できません。
+- 利用により発生したいかなる損害についても、開発側は責任を負いません。
 
-Run
----
+セットアップ
+-------------
 
-- `python app/main.py`
-- Notes:
-  - Headless environments: set `QT_QPA_PLATFORM=offscreen`
-  - On some macOS setups you may need `export QT_MAC_WANTS_LAYER=1`
+1. Python 3.9 以降を用意（macOS / Windows / Linux）
+2. 仮想環境を作成し依存関係をインストール
+   ```bash
+   python -m venv venv
+   source venv/bin/activate        # Windows は venv\Scripts\activate
+   python -m pip install --upgrade pip
+   python -m pip install -r requirements.txt
+   ```
 
-Smoke Test
-----------
+起動方法
+---------
 
-- `python scripts/smoke_test.py`
-- Launches the app offscreen and exits after ~1.5s printing `SMOKE_OK`.
+```bash
+python app/main.py
+```
 
-Build (PyInstaller)
--------------------
+- 初回起動時は「重要事項」タブで同意チェックが必要です。
+- macOS でウインドウが真っ白になる場合は `export QT_MAC_WANTS_LAYER=1` を試してください。
+- オフスクリーンで動かす場合は `QT_QPA_PLATFORM=offscreen` を指定します。
 
-- `pip install pyinstaller`
-- `pyinstaller JointSpaceVisualizer.spec`
-- Result under `dist/JointSpaceVisualizer`
+主な機能
+---------
 
-Features
---------
+- STL / PLY / VTK / VTP のロード（上顎骨モデル・下顎骨モデル）
+- VTK による距離計算とカスタム LUT（0–5 mm のレンジを赤→青で表示）
+- 表示／不透明度スライダー、デシメーション設定（処理時間短縮用）
+- 距離結果の保存（VTP/PLY/STL）・カラー焼き込み PLY の出力
+- スナップショットタブ、左右比較ビュー（カメラリンク ON/OFF）
+- ビュー毎の明るさスライダー、Zoom/Reset ボタン、マウス／ホイール操作
+- デバッグタブでアプリケーションログを参照可能
 
-- Load STL/PLY/VTK/VTP models (Target/Source)
-- Compute point-to-point distance (VTK) with custom LUT
-- Visibility/opacity controls; optional decimation
-- Save result (VTP/PLY/STL) and color-baked PLY
-- Snapshot tabs; side-by-side compare with linked cameras
-- Save screenshots (single/compare)
+テスト / スモークテスト
+-------------------------
 
-License
--------
+- 最小動作確認：
+  ```bash
+  python scripts/smoke_test.py
+  ```
+- 単体テスト：
+  ```bash
+  python -m pip install -r requirements-dev.txt
+  python -m pytest
+  ```
 
-- TBD
+ビルド（PyInstaller）
+---------------------
+
+```bash
+python -m pip install pyinstaller
+pyinstaller JointSpaceVisualizer.spec
+```
+
+`dist/JointSpaceVisualizer` にスタンドアロン実行ファイルが生成されます。
+
+既知の注意点
+--------------
+
+- 中止ボタンは VTK の処理キャンセルを要求し、応答がない場合は数秒で安全に UI を復帰させます。完了メッセージが出るまで待ってから操作を再開してください。
+- 大容量メッシュでは距離計算に時間がかかります。必要に応じてデシメーション率を下げ、処理時間と精度のバランスを調整してください。
+
+ライセンス
+-----------
+
+TBD
