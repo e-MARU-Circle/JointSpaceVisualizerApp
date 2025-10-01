@@ -67,6 +67,18 @@ pyinstaller JointSpaceVisualizer.spec
 
 `dist/JointSpaceVisualizer` にスタンドアロン実行ファイルが生成されます。
 
+Windows インストーラー
+------------------
+
+1. Windows 上で Python 3.9+ と NSIS (makensis.exe) をインストールします。
+2. PowerShell を管理者で開かず、リポジトリルートで以下を実行します。
+   ```powershell
+   powershell -ExecutionPolicy Bypass -File .\scripts\build_windows_installer.ps1
+   ```
+   - 既存の仮想環境を使いたい場合は `-ReuseVenv` を付けてください。
+   - PyInstaller の成果物だけ欲しい場合は `-SkipInstaller` で NSIS パッケージングをスキップできます。
+3. 完了後 `installer/windows/JointSpaceVisualizerSetup.exe` が生成されます。これが配布用セットアップです。
+
 既知の注意点
 --------------
 
