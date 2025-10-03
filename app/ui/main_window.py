@@ -775,11 +775,21 @@ class JointSpaceVisualizerApp(QtWidgets.QMainWindow):
 
         try:
             session = self.current_session()
+            if session is None:
+                QtWidgets.QMessageBox.warning(
+                    self,
+                    "Warning",
+                    "アクティブなセッションが見つからないためスクリーンショットを保存できません。",
+                )
+                return
+
+            if not file_path.lower().endswith(".png"):
+                file_path = f"{file_path}.png"
+
             logger.info("Saving screenshot to %s", file_path)
-            img = session['plotter'].screenshot(transparent_background=True)
-            tex = pv.numpy_to_texture(img)
-            tex.save(file_path)
-            print(f"Screenshot saved to {file_path}")
+            session['plotter'].screenshot(
+                filename=file_path, transparent_background=True
+            )
             logger.info("Screenshot saved to %s", file_path)
         except Exception as e:
             logger.exception("Failed to save screenshot to %s", file_path)
