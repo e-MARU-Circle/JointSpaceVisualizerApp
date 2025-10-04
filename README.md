@@ -79,6 +79,14 @@ Windows インストーラー
    - PyInstaller の成果物だけ欲しい場合は `-SkipInstaller` で NSIS パッケージングをスキップできます。
 3. 完了後 `installer/windows/JointSpaceVisualizerSetup.exe` が生成されます。これが配布用セットアップです。
 
+macOS パッケージ（未署名）
+----------------------
+
+- `installer/macos/JointSpaceVisualizer-mac.dmg` にビルド済み DMG が生成されます。Apple のコード署名・公証は行っていないため、Gatekeeper から警告が表示されます。
+- 利用時は DMG を開き、`JointSpaceVisualizer.app` を `Applications` フォルダなど任意の場所にドラッグしてください。
+- 初回起動は Finder でアプリを右クリック（control+クリック）→「開く」を選択し、警告ダイアログで再度「開く」を押すと起動できます。
+- 信頼済みに設定した後は通常どおりダブルクリックで起動できます。未署名なので macOS のセキュリティ設定を自己責任で調整してご利用ください。
+
 既知の注意点
 --------------
 
