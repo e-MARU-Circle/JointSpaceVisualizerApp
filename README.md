@@ -1,7 +1,7 @@
 JointSpaceVisualizer ver.2
 ==========================
 
-PyQt5 + PyVista 製の 3D 距離可視化ツールです。ターゲットモデルとソースモデルの表面距離を `vtkDistancePolyDataFilter` で計算し、カラーリングや比較ビューで確認できます。UI は日本語化され、「重要事項」タブで免責事項へ同意した後に操作します。
+PyQt5 + PyVista 製の 3D 距離可視化ツールです。ターゲットモデルとソースモデルの表面距離を `vtkDistancePolyDataFilter` で計算し、カラーリングや比較ビューで確認できます。アプリケーションはコマンドラインから起動して利用します（スタンドアロンパッケージは提供していません）。
 
 ⚠️ 重要：利用制限（アプリ内と同じ内容）
 --------------------------------------
@@ -22,8 +22,8 @@ PyQt5 + PyVista 製の 3D 距離可視化ツールです。ターゲットモデ
    python -m pip install -r requirements.txt
    ```
 
-起動方法
----------
+CLI からの起動
+---------------
 
 ```bash
 python app/main.py
@@ -57,35 +57,11 @@ python app/main.py
   python -m pytest
   ```
 
-ビルド（PyInstaller）
----------------------
+備考
+----
 
-```bash
-python -m pip install pyinstaller
-pyinstaller JointSpaceVisualizer.spec
-```
-
-`dist/JointSpaceVisualizer` にスタンドアロン実行ファイルが生成されます。
-
-Windows インストーラー
-------------------
-
-1. Windows 上で Python 3.9+ と NSIS (makensis.exe) をインストールします。
-2. PowerShell を管理者で開かず、リポジトリルートで以下を実行します。
-   ```powershell
-   powershell -ExecutionPolicy Bypass -File .\scripts\build_windows_installer.ps1
-   ```
-   - 既存の仮想環境を使いたい場合は `-ReuseVenv` を付けてください。
-   - PyInstaller の成果物だけ欲しい場合は `-SkipInstaller` で NSIS パッケージングをスキップできます。
-3. 完了後 `installer/windows/JointSpaceVisualizerSetup.exe` が生成されます。これが配布用セットアップです。
-
-macOS パッケージ（未署名）
-----------------------
-
-- `installer/macos/JointSpaceVisualizer-mac.dmg` にビルド済み DMG が生成されます。Apple のコード署名・公証は行っていないため、Gatekeeper から警告が表示されます。
-- 利用時は DMG を開き、`JointSpaceVisualizer.app` を `Applications` フォルダなど任意の場所にドラッグしてください。
-- 初回起動は Finder でアプリを右クリック（control+クリック）→「開く」を選択し、警告ダイアログで再度「開く」を押すと起動できます。
-- 信頼済みに設定した後は通常どおりダブルクリックで起動できます。未署名なので macOS のセキュリティ設定を自己責任で調整してご利用ください。
+- スタンドアロンのインストーラーや DMG などのパッケージは提供していません。各プラットフォームで Python 環境を用意し、上記の手順を実行してください。
+- 必要に応じて仮想環境を分けることで、他プロジェクトとの依存関係の衝突を避けられます。
 
 既知の注意点
 --------------
