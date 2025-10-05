@@ -75,7 +75,7 @@ if (-not $makensis) {
     throw "makensis.exe not found in PATH. Install NSIS from https://nsis.sourceforge.io/Download and ensure makensis.exe is discoverable."
 }
 
-$installerScript = Join-Path $repoRoot "installer/windows/JointSpaceVisualizer.nsi"
+$installerScript = Join-Path $repoRoot "scripts/windows/JointSpaceVisualizer.nsi"
 if (-not (Test-Path $installerScript)) {
     throw "Installer script missing at $installerScript"
 }

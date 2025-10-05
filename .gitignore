@@ -25,7 +25,7 @@ Thumbs.db
 # Build artifacts
 build/
 dist/
-installer/**/*.dmg
+installer/
 
 # Logs
 *.log
