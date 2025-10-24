@@ -1,10 +1,16 @@
 # -*- mode: python ; coding: utf-8 -*-
 
+from PyInstaller.config import CONF
 from PyInstaller.utils.hooks import (
     collect_data_files,
     collect_dynamic_libs,
     collect_submodules,
 )
+from PyInstaller.building.datastruct import TOC
+
+import os
+
+CONF['cachedir'] = os.path.join(os.getcwd(), '.pyinstaller-cache')
 
 pyvista_datas = collect_data_files('pyvista')
 pyvistaqt_datas = collect_data_files('pyvistaqt')
@@ -18,26 +24,49 @@ a = Analysis(
     binaries=vtk_binaries,
     datas=pyvista_datas + pyvistaqt_datas + [('resources', 'resources')],
     hiddenimports=hiddenimports,
-    hookspath=[],
+    hookspath=['hooks'],
     hooksconfig={},
     runtime_hooks=[],
-    excludes=[],
+    excludes=['scipy'],
     noarchive=False,
     optimize=0,
 )
+
+_ALLOWED_QT_PLUGIN_PREFIXES = [
+    'PyQt5/Qt5/plugins/platforms/',
+    'PyQt5/Qt5/plugins/styles/',
+    'PyQt5/Qt5/plugins/imageformats/',
+    'PyQt5/Qt5/plugins/iconengines/',
+]
+
+
+def _filter_binaries(entries):
+    filtered = []
+    for entry in entries:
+        dest = entry[0]
+        if dest.startswith('PyQt5/Qt5/plugins/'):
+            if any(dest.startswith(prefix) for prefix in _ALLOWED_QT_PLUGIN_PREFIXES):
+                filtered.append(entry)
+        else:
+            filtered.append(entry)
+    return TOC(filtered)
+
+
+a.binaries = _filter_binaries(a.binaries)
+
 pyz = PYZ(a.pure)
 
 exe = EXE(
     pyz,
     a.scripts,
     [],
-    exclude_binaries=False,
+    exclude_binaries=True,
     name='JointSpaceVisualizer',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
     upx=True,
-    console=True,
+    console=False,
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,
@@ -52,4 +81,10 @@ coll = COLLECT(
     upx=True,
     upx_exclude=[],
     name='JointSpaceVisualizer',
+)
+app = BUNDLE(
+    coll,
+    name='JointSpaceVisualizer.app',
+    icon=None,
+    bundle_identifier='jp.ema.JointSpaceVisualizer',
 )

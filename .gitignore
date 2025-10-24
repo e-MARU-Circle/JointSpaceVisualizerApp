@@ -4,6 +4,8 @@ __pycache__/
 *.pyo
 *.pyd
 .Python
+.pyinstaller/
+.pyinstaller-cache/
 .pytest_cache/
 .joint_space_visualizer/
 

@@ -5,6 +5,7 @@ from functools import partial
 
 import numpy as np
 import pyvista as pv
+from matplotlib.image import imsave
 from PyQt5 import QtCore, QtGui, QtWidgets
 from pyvistaqt import QtInteractor
 
@@ -787,9 +788,18 @@ class JointSpaceVisualizerApp(QtWidgets.QMainWindow):
                 file_path = f"{file_path}.png"
 
             logger.info("Saving screenshot to %s", file_path)
-            session['plotter'].screenshot(
-                filename=file_path, transparent_background=True
+            img = session['plotter'].screenshot(
+                return_img=True, transparent_background=True
             )
+            if img is None:
+                raise RuntimeError("PyVista returned no image data for the screenshot")
+            if hasattr(img, "to_array"):
+                img = img.to_array()
+            # Avoid PyVista Texture.save to bypass VTK metadata issues.
+            img_array = np.asarray(img)
+            if np.issubdtype(img_array.dtype, np.floating):
+                img_array = np.clip(img_array, 0.0, 255.0).astype(np.uint8)
+            imsave(file_path, img_array)
             logger.info("Screenshot saved to %s", file_path)
         except Exception as e:
             logger.exception("Failed to save screenshot to %s", file_path)
@@ -1284,6 +1294,10 @@ class JointSpaceVisualizerApp(QtWidgets.QMainWindow):
             logger.info("Saving compare screenshot to %s", file_path)
             img_left = self.compare_plotter_left.screenshot(transparent_background=True)
             img_right = self.compare_plotter_right.screenshot(transparent_background=True)
+            if hasattr(img_left, "to_array"):
+                img_left = img_left.to_array()
+            if hasattr(img_right, "to_array"):
+                img_right = img_right.to_array()
 
             # 高さを合わせる
             h_left, w_left, _ = img_left.shape
@@ -1298,8 +1312,11 @@ class JointSpaceVisualizerApp(QtWidgets.QMainWindow):
                     img_right_resized = pv.wrap(img_right).resize([new_w, h_left])
                     img_right = img_right_resized.to_array()
 
-            combined_img = pv.numpy_to_texture(img_left).hstack(pv.numpy_to_texture(img_right))
-            combined_img.save(file_path)
+            combined_img = np.hstack((img_left, img_right))
+            combined_array = np.asarray(combined_img)
+            if np.issubdtype(combined_array.dtype, np.floating):
+                combined_array = np.clip(combined_array, 0.0, 255.0).astype(np.uint8)
+            imsave(file_path, combined_array)
             print(f"Compare screenshot saved to {file_path}")
             logger.info("Compare screenshot saved to %s", file_path)
         except Exception as e:
